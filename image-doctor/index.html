@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Image Doctor - Free Image & PDF Tools</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>🖼️ IMAGE DOCTOR</h1>
+  <p>Free Image Resize & PDF Tools</p>
+</header>
+
+<section class="tool">
+  <h2>Image Resize</h2>
+  <input type="file" id="imageInput">
+  <input type="number" id="width" placeholder="Width (px)">
+  <input type="number" id="height" placeholder="Height (px)">
+  <button onclick="resizeImage()">Resize Image</button>
+  <br><br>
+  <canvas id="canvas"></canvas>
+  <br>
+  <a id="download" download="image-doctor.png">Download Image</a>
+</section>
+
+<footer>
+  <p>© 2026 Image Doctor | Free Online Tools</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
