@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>PDF Reader with Notes - Image Doctor</title>
+
+  <!-- PDF.js library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      display: flex;
+      gap: 20px;
+      padding: 20px;
+    }
+    #pdf-viewer {
+      width: 60%;
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+    #notes {
+      width: 40%;
+    }
+    textarea {
+      width: 100%;
+      height: 200px;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- 🔹 LEFT SIDE: PDF -->
+<div id="pdf-viewer">
+  <input type="file" id="pdfUpload" accept="application/pdf"><br><br>
+  <canvas id="pdfCanvas"></canvas>
+  <p>Page: <span id="pageNum">1</span></p>
+</div>
+
+<!-- 🔹 RIGHT SIDE: NOTES -->
+<div id="notes">
+  <h3>Notes (Page wise)</h3>
+  <textarea id="noteBox" placeholder="Write note for this page..."></textarea>
+</div>
+
+<script>
+  let pdfDoc = null;
+  let pageNumber = 1;
+
+  const canvas = document.getElementById("pdfCanvas");
+  const ctx = canvas.getContext("2d");
+
+  document.getElementById("pdfUpload").addEventListener("change", function(e) {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.onload = function() {
+      const typedarray = new Uint8Array(this.result);
+      pdfjsLib.getDocument(typedarray).promise.then(pdf => {
+        pdfDoc = pdf;
+        renderPage(pageNumber);
+      });
+    };
+    reader.readAsArrayBuffer(file);
+  });
+
+  function renderPage(num) {
+    pdfDoc.getPage(num).then(page => {
+      const viewport = page.getViewport({ scale: 1.3 });
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+
+      page.render({ canvasContext: ctx, viewport: viewport });
+      document.getElementById("pageNum").innerText = num;
+
+      // Load note
+      document.getElementById("noteBox").value =
+        localStorage.getItem("note_page_" + num) || "";
+    });
+  }
+
+  document.getElementById("noteBox").addEventListener("input", function() {
+    localStorage.setItem("note_page_" + pageNumber, this.value);
+  });
+</script>
+
+</body>
+</html>
